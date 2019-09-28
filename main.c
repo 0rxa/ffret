@@ -1,12 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "./ffret.h"
 
-cmd_options opts = { "$HOME/.config/ffret.conf", NULL, 0 };
+cmd_options opts = { "~/.config/ffret/ffret.conf", "$HOME/.config/ffret/plugins", 0 };
 
 int main(int argc, char** argv)
 {
+	// Parse command line options
 	parse_command(argc, argv, &opts);
 
 	if(opts.show_help)
@@ -16,11 +18,17 @@ int main(int argc, char** argv)
 						Default value is: $HOME/.config/ffret.conf\n\
 				-p <PATH>	The path to the plugin folder\n\
 				-h		Show this message\n");
+		return 0;
 	}
 
-	FILE* config = fopen(opts.config_file, "r");
+	// Expand shell variables
+	expand_path(&opts.config_file);
+	expand_path(&opts.ppath);
+
+	FILE* config = fopen(opts.config_file, "r+");
 	if(!config)
 	{
+		puts(opts.config_file);
 		printf("Could not open file\n");
 		exit(1);
 	}
