@@ -20,7 +20,7 @@ void parse_command(int argc, char** argv, cmd_options* opts)
 			// on invalid inputs or if the user used the -h option
 			case 'h':
 				opts->show_help = 1;
-				opt = 0;
+				opt = 0; // To break the while loop if user used the -h option
 				break;
 			case 'c':
 				str_length = strlen(optarg);
