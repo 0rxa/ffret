@@ -4,10 +4,12 @@
 
 #include "./ffret.h"
 
-cmd_options opts = { "~/.config/ffret/ffret.conf", "$HOME/.config/ffret/plugins", 0 };
 
 int main(int argc, char** argv)
 {
+	// Default values of command line options
+	cmd_options opts = { "~/.config/ffret/ffret.conf", "$HOME/.config/ffret/plugins/", 0 };
+
 	// Parse command line options
 	parse_command(argc, argv, &opts);
 
@@ -21,11 +23,11 @@ int main(int argc, char** argv)
 		return 0;
 	}
 
-	// Expand shell variables
+	// Expand environment variables
 	expand_path(&opts.config_file);
 	expand_path(&opts.ppath);
 
-	FILE* config = fopen(opts.config_file, "r+");
+	FILE* config = fopen(opts.config_file, "r");
 	if(!config)
 	{
 		puts(opts.config_file);
