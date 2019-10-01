@@ -3,12 +3,16 @@
 #include <string.h>
 
 #include "./ffret.h"
+#include "./config.h"
 
 
 int main(int argc, char** argv)
 {
 	// Default values of command line options
 	cmd_options opts = { "~/.config/ffret/ffret.conf", "$HOME/.config/ffret/plugins/", 0 };
+
+	// Start with an empty list so it can be expanded dynamically
+	config* cfg = NULL;
 
 	// Parse command line options
 	parse_command(argc, argv, &opts);
@@ -40,6 +44,8 @@ int main(int argc, char** argv)
 	size_t len = 0;
 	while( (line_s = getline(&line, &len, config) != -1) )
 	{
-		puts(line);
+		parse_config(line, &cfg);
 	}
+	
+	return 0;
 }
