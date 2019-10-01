@@ -5,7 +5,10 @@ NAME="main.c"
 FFRET_OBJ="ffret"
 
 ffret:
-	$(CC) -o $(BINARY) $(NAME) ffret.c
+	$(CC) -o $(BINARY) $(NAME) ffret.c config.c
+
+debug:
+	$(CC) -g -o $(BINARY) $(NAME) ffret.c config.c
 
 install:
 	cp $(BINARY) $(DEST)
