@@ -1,12 +1,12 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdbool.h>
 #include <stdlib.h>
 #include <wordexp.h>
 
 #include "./ffret.h"
 
+// Command line parser to keep main clean
 void parse_command(int argc, char** argv, cmd_options* opts)
 {
 	int opt;
@@ -25,12 +25,12 @@ void parse_command(int argc, char** argv, cmd_options* opts)
 			case 'c':
 				str_length = strlen(optarg);
 				opts->config_file = malloc(str_length);
-				strncpy(opts->config_file, optarg, str_length);
+				strcpy(opts->config_file, optarg);
 				break;
 			case 'p':
 				str_length = strlen(optarg);
 				opts->ppath = malloc(str_length);
-				strncpy(opts->ppath, optarg, str_length);
+				strcpy(opts->ppath, optarg);
 				break;
 			case ':':
 				opts->show_help = 1;
