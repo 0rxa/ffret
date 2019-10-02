@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <regex.h>
 
 #include "./ffret.h"
 #include "./config.h"
@@ -31,8 +32,8 @@ int main(int argc, char** argv)
 	expand_path(&opts.config_file);
 	expand_path(&opts.ppath);
 
-	FILE* config = fopen(opts.config_file, "r");
-	if(!config)
+	FILE* config_path = fopen(opts.config_file, "r");
+	if(!config_path)
 	{
 		puts(opts.config_file);
 		printf("Could not open file\n");
@@ -42,10 +43,32 @@ int main(int argc, char** argv)
 	char* line;
 	ssize_t line_s;
 	size_t len = 0;
-	while( (line_s = getline(&line, &len, config) != -1) )
+	while( (line_s = getline(&line, &len, config_path) != -1) )
 	{
-		parse_config(line, &cfg);
+		regex_t regex;
+		int reti;
+
+		// Finds line that does not start with whitespace
+		// It's the folder block name
+		if( regcomp(&regex, "^[^[:space:]]", 0) )
+		{
+			printf("Error compiling regex\n");
+			exit(1);
+		}
+		reti = regexec(&regex, line, 0, NULL, 0);
+
+		if( !reti )
+		{
+			cfg = expand(cfg);
+			init_folder_block(line, &cfg);
+		}
 	}
-	
+
+	printf("Block name: %s\n", cfg->block->name);
+	printf("Directories:\n");
+	for( int c = 0; c < 2; c++ )
+	{
+		printf("\t%s\n", cfg->block->directories[c]);
+	}
 	return 0;
 }
