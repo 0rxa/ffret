@@ -23,4 +23,4 @@ void parse_config(char* line, config** cfg);
 
 config* expand(config* next);
 
-
+void init_folder_block(char* line, config** cfg);
