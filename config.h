@@ -3,6 +3,7 @@
 struct folder_block{
 	char* name;
 	char** directories;
+	int number_of_directories;
 	bool recursive;
 
 	char* rule_name;

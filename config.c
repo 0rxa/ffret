@@ -14,7 +14,7 @@ config* expand(config* next)
 	return new_entry;
 }
 
-char** split_paths(char* path_string, folder_block** block )
+int split_paths(char* path_string, folder_block** block )
 {
 	int dirnum = 0;
 	for( int c = 0; c < strlen(path_string); c++ )
@@ -25,10 +25,10 @@ char** split_paths(char* path_string, folder_block** block )
 
 	char** paths = malloc(sizeof(char*)*dirnum);
 	int last_ix = 0, str_ix = 0;
-	printf("%s\n", path_string);
 	int c;
 	for( c = 0; c < strlen(path_string); c++ )
 	{
+		if( path_string[c] == ':' ) break; // Break if no more paths
 		if( path_string[c] == ',' || path_string[c+1] == '\0' )
 		{
 			size_t sizeof_path = (c-last_ix+1);
@@ -37,7 +37,6 @@ char** split_paths(char* path_string, folder_block** block )
 			strncpy(paths[str_ix], &path_string[last_ix], sizeof_path-1);
 			paths[str_ix][sizeof_path-1] = '\0';
 
-			printf("%s\n", paths[str_ix]);
 			last_ix = c+1;
 			str_ix++;
 		}
@@ -45,7 +44,9 @@ char** split_paths(char* path_string, folder_block** block )
 
 	folder_block* block_alias = *block;
 	block_alias->directories = malloc(sizeof(char*)*dirnum);
-	memcpy(block_alias->directories, paths, c);
+	memcpy(block_alias->directories, paths, sizeof(char*)*dirnum);
+
+	return dirnum;
 }
 
 void init_folder_block(char* line, config** cfg)
@@ -64,11 +65,7 @@ void init_folder_block(char* line, config** cfg)
 
 	reti = regexec(&regex, line, nmatch, match, 0);
 
-	if( !reti )
-	{
-		 puts("MATCH");
-	}
-	else
+	if( reti )
 	{
 		puts("NO MATCH");
 		exit(1);
@@ -84,5 +81,10 @@ void init_folder_block(char* line, config** cfg)
 	char* path_string = malloc(sizeof_paths*sizeof(char));
 	strncpy(path_string, &line[match[2].rm_so], sizeof_paths);
 
-	split_paths(path_string, &cfg_alias->block);
+	cfg_alias->block->number_of_directories = split_paths(path_string, &cfg_alias->block);
+
+	if(match[3].rm_eo-match[3].rm_so > 1)
+	{
+		cfg_alias->block->recursive = true;
+	}
 }
