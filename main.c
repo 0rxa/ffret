@@ -66,9 +66,11 @@ int main(int argc, char** argv)
 
 	printf("Block name: %s\n", cfg->block->name);
 	printf("Directories:\n");
-	for( int c = 0; c < 2; c++ )
+	for( int c = 0; c < cfg->block->number_of_directories; c++ )
 	{
 		printf("\t%s\n", cfg->block->directories[c]);
 	}
+	printf("is_recursive: %d\n", cfg->block->recursive);
+
 	return 0;
 }
